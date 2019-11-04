@@ -16,5 +16,8 @@
     <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.66">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Webview.Batteries.Linux" Version="0.1.0" />
+    <PackageReference Include="Webview.Batteries.Mac" Version="0.1.0" />
+    <PackageReference Include="Webview.Batteries.Win" Version="0.1.0" />
   </ItemGroup>
 </Project>
