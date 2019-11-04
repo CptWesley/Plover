@@ -10,6 +10,7 @@ namespace Plover
         private readonly IntPtr ptr;
 
         private bool disposed;
+        private string title;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Window"/> class.
@@ -22,6 +23,7 @@ namespace Plover
         public Window(string title, string url, int width, int height, bool resizable)
         {
             ptr = NativeMethods.WebviewAlloc(title, url, width, height, resizable ? 1 : 0, 1, Callback);
+            this.title = title;
         }
 
         /// <summary>
@@ -36,6 +38,58 @@ namespace Plover
             : this(title, uri?.AbsoluteUri, width, height, resizable)
         {
         }
+
+        /// <summary>
+        /// Finalizes an instance of the <see cref="Window"/> class.
+        /// </summary>
+        ~Window() => Dispose(false);
+
+        /// <summary>
+        /// Gets or sets the title of the window.
+        /// </summary>
+        public string Title
+        {
+            get => title;
+            set
+            {
+                title = value;
+                int error = NativeMethods.WebviewSetTitle(ptr, title);
+                if (error == 0)
+                {
+                    throw new InvalidOperationException("Failed to set window title.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Starts rendering the window and perform an action each tick.
+        /// </summary>
+        /// <param name="onLoad">The action to be performed before rendering.</param>
+        public void Render(Action<Window> onLoad)
+        {
+            if (onLoad == null)
+            {
+                throw new ArgumentNullException(nameof(onLoad));
+            }
+
+            onLoad(this);
+            while (NativeMethods.WebviewLoop(ptr, 1) == 0)
+            {
+            }
+
+            NativeMethods.WebviewExit(ptr);
+        }
+
+        /// <summary>
+        /// Starts rendering the window and perform an action each tick.
+        /// </summary>
+        /// <param name="onLoad">The action to be performed on each tick.</param>
+        public void Render(Action onLoad) => Render((x) => onLoad());
+
+        /// <summary>
+        /// Starts rendering the window.
+        /// </summary>
+        public void Render() => Render(() => { });
 
         /// <inheritdoc/>
         public void Dispose()
@@ -59,7 +113,7 @@ namespace Plover
 
         private void Callback(IntPtr webview, string arg)
         {
-
+            Console.WriteLine(arg);
         }
     }
 }

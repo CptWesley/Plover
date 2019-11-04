@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29215.179
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plover", "Plover\Plover.csproj", "{23778C74-969B-409D-9B3F-0AF526FFF2A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plover", "Plover\Plover.csproj", "{23778C74-969B-409D-9B3F-0AF526FFF2A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plover.Tests", "Plover.Tests\Plover.Tests.csproj", "{8BA2E3FC-3236-48BE-824C-333A8B11C09D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plover.Tests", "Plover.Tests\Plover.Tests.csproj", "{8BA2E3FC-3236-48BE-824C-333A8B11C09D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plover.Demo", "Plover.Demo\Plover.Demo.csproj", "{641AD4A2-1CE2-437C-9E6F-0B10ADB255FC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{8BA2E3FC-3236-48BE-824C-333A8B11C09D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8BA2E3FC-3236-48BE-824C-333A8B11C09D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8BA2E3FC-3236-48BE-824C-333A8B11C09D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{641AD4A2-1CE2-437C-9E6F-0B10ADB255FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{641AD4A2-1CE2-437C-9E6F-0B10ADB255FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{641AD4A2-1CE2-437C-9E6F-0B10ADB255FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{641AD4A2-1CE2-437C-9E6F-0B10ADB255FC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
