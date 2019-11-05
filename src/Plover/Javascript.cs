@@ -21,10 +21,10 @@ namespace Plover
         /// <summary>
         /// Executes the specified JavaScript code.
         /// </summary>
-        /// <param name="js">The JavaScript code to execute.</param>
-        public void Execute(string js)
+        /// <param name="jsStataments">The JavaScript stataments to execute.</param>
+        public void Execute(string jsStataments)
         {
-            if (NativeMethods.WebviewEval(webview, js) != 0)
+            if (NativeMethods.WebviewEval(webview, jsStataments) != 0)
             {
                 throw new ArgumentException($"An error occured while executing JavaScript code.");
             }
@@ -34,15 +34,15 @@ namespace Plover
         /// Executes the specified JavaScript and gives the return value.
         /// </summary>
         /// <typeparam name="T">The return type.</typeparam>
-        /// <param name="js">The JavaScript code to execute.</param>
+        /// <param name="jsExpression">The JavaScript expression to evaluate.</param>
         /// <returns>The returned value.</returns>
-        public T Execute<T>(string js)
+        public T Execute<T>(string jsExpression)
         {
             string id = Guid.NewGuid().ToString();
 
             try
             {
-                Execute($"external.invoke(JSON.stringify({{type: 'retrieval', id: '{id}', value: JSON.stringify({js})}}))");
+                Execute($"external.invoke(JSON.stringify({{type: 'retrieval', id: '{id}', value: JSON.stringify({jsExpression})}}))");
                 return JsonConvert.DeserializeObject<T>(retrievals[id]);
             }
             finally
