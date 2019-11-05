@@ -96,7 +96,7 @@ namespace Plover.Dom
         {
             string[] fields = JsEvents.GetFields(eventType);
             string args = $"{{{string.Join(", ", fields.Select(x => $"{x}: event.{x}"))}}}";
-            element.AddEventListener(eventType, $"function(event) {{ external.invoke(JSON.stringify({{type: 'event', id: '{element.MetaId}', event: '{eventType}', args: {args}}})); }}");
+            element.AddEventListener(eventType, $"function(event) {{ external.invoke(JSON.stringify({{type: 'event', id: '{element.MetaId}', args: {args}}})); }}");
         }
 
         private T InternalCreateElement<T>()

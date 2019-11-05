@@ -1,4 +1,7 @@
-﻿using System;
+﻿#pragma warning disable CS0067
+
+using System;
+using System.Reflection;
 using Plover.Events;
 
 namespace Plover.Dom
@@ -74,11 +77,15 @@ namespace Plover.Dom
         /// <param name="e">The arguments of the event.</param>
         internal void SendEvent(JsEventArgs e)
         {
-            switch (e.Type)
+            FieldInfo field = typeof(HtmlElement).GetField($"on{e.Type}", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.IgnoreCase);
+            if (field != null)
             {
-                case "click":
-                    OnClick?.Invoke(this, (MouseEventArgs)e);
-                    break;
+                MulticastDelegate eventDelegate = (MulticastDelegate)field.GetValue(this);
+
+                if (eventDelegate != null)
+                {
+                    eventDelegate.DynamicInvoke(this, e);
+                }
             }
         }
 
@@ -92,3 +99,5 @@ namespace Plover.Dom
             => Document.JavaScript.Execute($"metaIdTable['{MetaId}'].{call};");
     }
 }
+
+#pragma warning restore CS0067

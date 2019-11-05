@@ -51,7 +51,8 @@ namespace Plover.Events
         /// <returns>An array with all fields of the event args.</returns>
         [SuppressMessage("Microsoft.Globalization", "CA1308", Justification = "Not used for comparisons.")]
         internal static string[] GetFields(string eventType)
-            => GetArgumentsType(eventType).GetProperties().Select(x => x.Name.Substring(0, 1).ToLowerInvariant() + x.Name.Substring(1)).ToArray();
+            => GetArgumentsType(eventType).GetProperties(BindingFlags.Instance | BindingFlags.Public)
+            .Select(x => x.Name.Substring(0, 1).ToLowerInvariant() + x.Name.Substring(1)).ToArray();
 
         /// <summary>
         /// Creates event arguments objects.
@@ -65,7 +66,7 @@ namespace Plover.Events
 
             foreach (KeyValuePair<string, JToken> pair in json)
             {
-                PropertyInfo property = type.GetProperty(pair.Key.Substring(0, 1).ToUpperInvariant() + pair.Key.Substring(1));
+                PropertyInfo property = type.GetProperty(pair.Key, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
                 property.SetValue(result, pair.Value.ToObject(property.PropertyType));
             }
 
