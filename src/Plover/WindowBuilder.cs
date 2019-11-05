@@ -12,6 +12,7 @@ namespace Plover
         private bool resizable = true;
         private string title = "Plover App";
         private string url = string.Empty;
+        private bool fullscreen = false;
 
         /// <summary>
         /// Builds this instance.
@@ -26,7 +27,10 @@ namespace Plover
                 url = UrlFromHtml("<html></html>");
             }
 
-            return new Window(title, url, width, height, resizable);
+            return new Window(title, url, width, height, resizable)
+            {
+                Fullscreen = fullscreen,
+            };
         }
 
         /// <summary>
@@ -69,7 +73,7 @@ namespace Plover
         /// </summary>
         /// <param name="url">The URL of the window.</param>
         /// <returns>The same <see cref="WindowBuilder"/> instance.</returns>
-        public WindowBuilder WithUrl(string url)
+        public WindowBuilder FromUrl(string url)
         {
             this.url = url;
             return this;
@@ -80,7 +84,7 @@ namespace Plover
         /// </summary>
         /// <param name="uri">The URI of the window.</param>
         /// <returns>The same <see cref="WindowBuilder"/> instance.</returns>
-        public WindowBuilder WithUrl(Uri uri)
+        public WindowBuilder FromUrl(Uri uri)
         {
             this.url = uri?.AbsoluteUri;
             return this;
@@ -91,9 +95,30 @@ namespace Plover
         /// </summary>
         /// <param name="html">The HTML content.</param>
         /// <returns>The same <see cref="WindowBuilder"/> instance.</returns>
-        public WindowBuilder WithHtml(string html)
+        public WindowBuilder FromHtml(string html)
         {
             this.url = UrlFromHtml(html);
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the url to a file path.
+        /// </summary>
+        /// <param name="fileName">The path to the file containing HTML.</param>
+        /// <returns>The same <see cref="WindowBuilder"/> instance.</returns>
+        public WindowBuilder FromFile(string fileName)
+        {
+            this.url = $"file:///{fileName}";
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the default windowing mode of the window to fullscreen.
+        /// </summary>
+        /// <returns>The same <see cref="WindowBuilder"/> instance.</returns>
+        public WindowBuilder IsFullscreen()
+        {
+            this.fullscreen = true;
             return this;
         }
 

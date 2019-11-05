@@ -1,4 +1,6 @@
 ﻿using System;
+using Newtonsoft.Json.Linq;
+using Plover.Dom;
 
 namespace Plover
 {
@@ -11,6 +13,7 @@ namespace Plover
 
         private bool disposed;
         private string title;
+        private bool fullscreen;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Window"/> class.
@@ -24,6 +27,8 @@ namespace Plover
         {
             ptr = NativeMethods.WebviewAlloc(title, url, width, height, resizable ? 1 : 0, 1, Callback);
             this.title = title;
+            JavaScript = new JavaScript(ptr);
+            Document = new Document(JavaScript);
         }
 
         /// <summary>
@@ -53,13 +58,38 @@ namespace Plover
             set
             {
                 title = value;
-                int error = NativeMethods.WebviewSetTitle(ptr, title);
-                if (error == 0)
+                if (NativeMethods.WebviewSetTitle(ptr, title) == 0)
                 {
                     throw new InvalidOperationException("Failed to set window title.");
                 }
             }
         }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="Window"/> is fullscreen.
+        /// </summary>
+        public bool Fullscreen
+        {
+            get => fullscreen;
+            set
+            {
+                fullscreen = value;
+                if (NativeMethods.WebviewSetFullscreen(ptr, fullscreen ? 1 : 0) == 0)
+                {
+                    throw new InvalidOperationException("Failed to set window fullscreen mode.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the JavaScript engine instance for this window.
+        /// </summary>
+        public JavaScript JavaScript { get; }
+
+        /// <summary>
+        /// Gets the DOM document.
+        /// </summary>
+        public Document Document { get; }
 
         /// <summary>
         /// Starts rendering the window and perform an action each tick.
@@ -113,7 +143,15 @@ namespace Plover
 
         private void Callback(IntPtr webview, string arg)
         {
-            Console.WriteLine(arg);
+            JObject payload = JObject.Parse(arg);
+            string type = (string)payload["type"];
+
+            if (type == "retrieval")
+            {
+                string id = (string)payload["id"];
+                string value = (string)payload["value"];
+                JavaScript.SetValue(id, value);
+            }
         }
     }
 }
