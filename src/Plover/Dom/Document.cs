@@ -84,6 +84,16 @@ namespace Plover.Dom
             }
         }
 
+        /// <summary>
+        /// Gets the element by identifier.
+        /// </summary>
+        /// <typeparam name="T">Type of the element.</typeparam>
+        /// <param name="id">The identifier of the element.</param>
+        /// <returns>The element of the given type.</returns>
+        public T GetElementById<T>(string id)
+            where T : HtmlElement
+            => (T)GetElementById(id);
+
         private static void AddDefaultEvents(HtmlElement element)
         {
             foreach (string sort in JsEvents.GetEvents())
