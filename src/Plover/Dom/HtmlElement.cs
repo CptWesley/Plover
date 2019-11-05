@@ -1,38 +1,94 @@
 ﻿using System;
+using Plover.Events;
 
 namespace Plover.Dom
 {
+    /// <summary>
+    /// Abstract class for HTML elements.
+    /// </summary>
     public abstract class HtmlElement
     {
-        public event EventHandler OnClick;
-
-        private readonly Document document;
-        private readonly bool inDom;
-
-        private string id;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="HtmlElement"/> class.
         /// </summary>
-        /// <param name="document">The parent DOM document.</param>
-        public HtmlElement(string id, Document document)
+        /// <param name="tagName">The tag.</param>
+        public HtmlElement(string tagName)
         {
-            this.document = document;
-            this.id = id;
+            TagName = tagName;
         }
 
-        public string Id
-        {
-            get => id;
-            set
-            {
-                id = value;
+        /// <summary>
+        /// Occurs when the element is clicked.
+        /// </summary>
+        public event MouseEventHandler OnClick;
 
-                if (inDom)
-                {
-                    document.JavaScript.Execute($"document.getElementById('{id}').id = '{id}';");
-                }
+        /// <summary>
+        /// Gets the tag.
+        /// </summary>
+        public string TagName { get; }
+
+        /// <summary>
+        /// Gets the meta identifier.
+        /// </summary>
+        public string MetaId { get; internal set; }
+
+        /// <summary>
+        /// Gets or sets the inner HTML.
+        /// </summary>
+        public string InnerHtml { get => GetField("innerHTML"); set => SetField("innerHTML", value); }
+
+        /// <summary>
+        /// Gets or sets the identifier.
+        /// </summary>
+        public string Id { get => GetField("id"); set => SetField("id", value); }
+
+        /// <summary>
+        /// Gets or sets the document.
+        /// </summary>
+        internal Document Document { get; set; }
+
+        /// <summary>
+        /// Appends a child node.
+        /// </summary>
+        /// <param name="element">The element to append.</param>
+        public void AppendChild(HtmlElement element)
+        {
+            if (element == null)
+            {
+                throw new ArgumentNullException(nameof(element));
+            }
+
+            Document.JavaScript.Execute($"metaIdTable['{MetaId}'].appendChild(metaIdTable['{element.MetaId}']);");
+        }
+
+        /// <summary>
+        /// Adds an event listener.
+        /// </summary>
+        /// <param name="eventType">Type of the event.</param>
+        /// <param name="jsHandler">The js handler.</param>
+        public void AddEventListener(string eventType, string jsHandler) => Call($"addEventListener('{eventType}', {jsHandler})");
+
+        /// <summary>
+        /// Sends the event.
+        /// </summary>
+        /// <param name="e">The arguments of the event.</param>
+        internal void SendEvent(JsEventArgs e)
+        {
+            switch (e.Type)
+            {
+                case "click":
+                    OnClick?.Invoke(this, (MouseEventArgs)e);
+                    break;
             }
         }
+
+        private void SetField(string field, string value)
+            => Document.JavaScript.Execute($"metaIdTable['{MetaId}'].{field} = '{value}';");
+
+        private string GetField(string field)
+            => Document.JavaScript.Execute<string>($"metaIdTable['{MetaId}'].{field}");
+
+        private void Call(string call)
+            => Document.JavaScript.Execute($"metaIdTable['{MetaId}'].{call};");
     }
 }

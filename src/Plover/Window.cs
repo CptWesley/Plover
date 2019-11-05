@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using Newtonsoft.Json.Linq;
 using Plover.Dom;
+using Plover.Events;
 
 namespace Plover
 {
@@ -10,6 +12,7 @@ namespace Plover
     public class Window : IDisposable
     {
         private readonly IntPtr ptr;
+        private readonly GCHandle gcCallback;
 
         private bool disposed;
         private string title;
@@ -25,7 +28,9 @@ namespace Plover
         /// <param name="resizable">Indicates if the window should be resizable.</param>
         public Window(string title, string url, int width, int height, bool resizable)
         {
-            ptr = NativeMethods.WebviewAlloc(title, url, width, height, resizable ? 1 : 0, 1, Callback);
+            NativeMethods.Callback callback = Callback;
+            gcCallback = GCHandle.Alloc(callback);
+            ptr = NativeMethods.WebviewAlloc(title, url, width, height, resizable ? 1 : 0, 1, callback);
             this.title = title;
             JavaScript = new JavaScript(ptr);
             Document = new Document(JavaScript);
@@ -136,6 +141,7 @@ namespace Plover
         {
             if (!disposed)
             {
+                gcCallback.Free();
                 NativeMethods.WebviewRelease(ptr);
                 disposed = true;
             }
@@ -149,8 +155,14 @@ namespace Plover
             if (type == "retrieval")
             {
                 string id = (string)payload["id"];
-                string value = (string)payload["value"];
+                JToken value = payload["value"];
                 JavaScript.SetValue(id, value);
+            }
+            else if (type == "event")
+            {
+                HtmlElement target = Document.Elements[(string)payload["id"]];
+                JObject args = (JObject)payload["args"];
+                target.SendEvent(JsEvents.CreateArguments(args));
             }
         }
     }

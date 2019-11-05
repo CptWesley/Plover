@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Plover
 {
@@ -10,7 +10,7 @@ namespace Plover
     public class JavaScript
     {
         private readonly IntPtr webview;
-        private readonly Dictionary<string, string> retrievals = new Dictionary<string, string>();
+        private readonly Dictionary<string, JToken> retrievals = new Dictionary<string, JToken>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="JavaScript"/> class.
@@ -42,8 +42,15 @@ namespace Plover
 
             try
             {
-                Execute($"external.invoke(JSON.stringify({{type: 'retrieval', id: '{id}', value: JSON.stringify({jsExpression})}}))");
-                return JsonConvert.DeserializeObject<T>(retrievals[id]);
+                Execute($"external.invoke(JSON.stringify({{type: 'retrieval', id: '{id}', value: {jsExpression}}}))");
+
+                JToken value = retrievals[id];
+                if (value == null)
+                {
+                    return default;
+                }
+
+                return value.ToObject<T>();
             }
             finally
             {
@@ -56,6 +63,6 @@ namespace Plover
         /// </summary>
         /// <param name="id">The identifier of the retrieval.</param>
         /// <param name="value">The value.</param>
-        internal void SetValue(string id, string value) => retrievals[id] = value;
+        internal void SetValue(string id, JToken value) => retrievals[id] = value;
     }
 }
