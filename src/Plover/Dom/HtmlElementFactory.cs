@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Plover.Dom
 {
     /// <summary>
     /// Factory for creating html elements.
     /// </summary>
+    [SuppressMessage("Microsoft.Maintainability", "CA1506", Justification = "Generated factory method /shrug.")]
     public static class HtmlElementFactory
     {
         /// <summary>
