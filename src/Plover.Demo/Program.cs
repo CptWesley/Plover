@@ -33,6 +33,7 @@ namespace Plover.Demo
                     {
                         b.InnerHtml = $"[{++cntr}] Alt was pressed: {e.AltKey}";
                     };
+                    b.OnContextMenu += (s, e) => Console.WriteLine("Sorry no contect menu :(");
                 });
         }
     }

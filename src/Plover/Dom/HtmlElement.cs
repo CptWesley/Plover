@@ -26,6 +26,51 @@ namespace Plover.Dom
         public event MouseEventHandler OnClick;
 
         /// <summary>
+        /// Occurs when the user right clicks the element.
+        /// </summary>
+        public event MouseEventHandler OnContextMenu;
+
+        /// <summary>
+        /// Occurs when the user double clicks the element.
+        /// </summary>
+        public event MouseEventHandler OnDblClick;
+
+        /// <summary>
+        /// Occurs when the user starts pressing a mouse button over the element.
+        /// </summary>
+        public event MouseEventHandler OnMouseDown;
+
+        /// <summary>
+        /// Occurs when the user moves the pointer onto the element.
+        /// </summary>
+        public event MouseEventHandler OnMouseEnter;
+
+        /// <summary>
+        /// Occurs when the user moves the pointer out of the element.
+        /// </summary>
+        public event MouseEventHandler OnMouseLeave;
+
+        /// <summary>
+        /// Occurs when the user moves the pointer while on the element.
+        /// </summary>
+        public event MouseEventHandler OnMouseMove;
+
+        /// <summary>
+        /// Occurs when the user moves the pointer out of an element or its children.
+        /// </summary>
+        public event MouseEventHandler OnMouseOut;
+
+        /// <summary>
+        /// Occurs when the user moves the pointer onto the element or its children.
+        /// </summary>
+        public event MouseEventHandler OnMouseOver;
+
+        /// <summary>
+        /// Occurs when the user releases a mouse button over the element.
+        /// </summary>
+        public event MouseEventHandler OnMouseUp;
+
+        /// <summary>
         /// Gets the tag.
         /// </summary>
         public string TagName { get; }
