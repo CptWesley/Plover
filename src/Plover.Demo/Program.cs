@@ -44,6 +44,8 @@ namespace Plover.Demo
                     HtmlCollection<Button> buttons = window.Document.GetElementsByTagName<Button>();
 
                     Console.WriteLine($"Buttons:\n{string.Join("\n", buttons.Select(x => x.InnerHtml))}");
+
+                    Console.WriteLine($"Button b: {buttons[b.Id]}");
                 });
         }
     }
