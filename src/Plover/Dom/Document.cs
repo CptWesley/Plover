@@ -72,17 +72,7 @@ namespace Plover.Dom
         /// <param name="id">The identifier of the element.</param>
         /// <returns>The element with the identifier.</returns>
         public HtmlElement GetElementById(string id)
-        {
-            try
-            {
-                string metaId = GetMetaIdByExpression($"document.getElementById('{id}')");
-                return Elements[metaId];
-            }
-            catch (ArgumentException)
-            {
-                throw new ArgumentException($"Element with id '{id}' does not exist.", nameof(id));
-            }
-        }
+            => GetElementByExpression($"document.getElementById('{id}')");
 
         /// <summary>
         /// Gets the element by identifier.
@@ -125,7 +115,7 @@ namespace Plover.Dom
             AddDefaultEvents(element);
         }
 
-        private string GetMetaIdByExpression(string expression)
+        private HtmlElement GetElementByExpression(string expression)
         {
             bool exists = JavaScript.Execute<bool>($"{expression} instanceof HTMLElement");
 
@@ -137,7 +127,7 @@ namespace Plover.Dom
             string metaId = JavaScript.Execute<string>($"metaIdTableReverse[{expression}]");
             if (!string.IsNullOrEmpty(metaId))
             {
-                return metaId;
+                return Elements[metaId];
             }
 
             string tag = JavaScript.Execute<string>($"{expression}.tagName");
@@ -145,7 +135,7 @@ namespace Plover.Dom
             element.Document = this;
             element.MetaId = Guid.NewGuid().ToString();
             AddMetaId(element, expression);
-            return element.MetaId;
+            return element;
         }
     }
 }
