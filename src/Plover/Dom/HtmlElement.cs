@@ -106,7 +106,7 @@ namespace Plover.Dom
                 throw new ArgumentNullException(nameof(element));
             }
 
-            Document.JavaScript.Execute($"metaIdTable['{MetaId}'].appendChild(metaIdTable['{element.MetaId}']);");
+            Document.JavaScript.Execute($"metaIdTable.get('{MetaId}').appendChild(metaIdTable.get('{element.MetaId}'));");
         }
 
         /// <summary>
@@ -135,13 +135,13 @@ namespace Plover.Dom
         }
 
         private void SetField(string field, string value)
-            => Document.JavaScript.Execute($"metaIdTable['{MetaId}'].{field} = '{value}';");
+            => Document.JavaScript.Execute($"metaIdTable.get('{MetaId}').{field} = '{value}';");
 
         private string GetField(string field)
-            => Document.JavaScript.Execute<string>($"metaIdTable['{MetaId}'].{field}");
+            => Document.JavaScript.Execute<string>($"metaIdTable.get('{MetaId}').{field}");
 
         private void Call(string call)
-            => Document.JavaScript.Execute($"metaIdTable['{MetaId}'].{call};");
+            => Document.JavaScript.Execute($"metaIdTable.get('{MetaId}').{call};");
     }
 }
 

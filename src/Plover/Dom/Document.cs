@@ -18,7 +18,7 @@ namespace Plover.Dom
         {
             JavaScript = js;
             Body = InternalCreateElement<Body>();
-            JavaScript.Execute("metaIdTable={};metaIdTableReverse={};");
+            JavaScript.Execute("metaIdTable=new Map();metaIdTableReverse=new Map();");
             AddMetaId(Body, "document.body");
         }
 
@@ -110,8 +110,8 @@ namespace Plover.Dom
         private void AddMetaId(HtmlElement element, string jsExpression)
         {
             Elements.Add(element.MetaId, element);
-            JavaScript.Execute($"metaIdTable['{element.MetaId}'] = {jsExpression};");
-            JavaScript.Execute($"metaIdTableReverse[metaIdTable['{element.MetaId}']] = '{element.MetaId}';");
+            JavaScript.Execute($"metaIdTable.set('{element.MetaId}', {jsExpression});");
+            JavaScript.Execute($"metaIdTableReverse.set(metaIdTable.get('{element.MetaId}'), '{element.MetaId}');");
             AddDefaultEvents(element);
         }
 
@@ -124,7 +124,7 @@ namespace Plover.Dom
                 throw new ArgumentException("Given expression does not evaluate to an object.", nameof(expression));
             }
 
-            string metaId = JavaScript.Execute<string>($"metaIdTableReverse[{expression}]");
+            string metaId = JavaScript.Execute<string>($"metaIdTableReverse.get({expression})");
             if (!string.IsNullOrEmpty(metaId))
             {
                 return Elements[metaId];
