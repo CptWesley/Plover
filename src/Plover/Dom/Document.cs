@@ -84,6 +84,57 @@ namespace Plover.Dom
             where T : HtmlElement
             => (T)GetElementById(id);
 
+        /// <summary>
+        /// Gets a collection of HTML elements with a given tag name.
+        /// </summary>
+        /// <param name="tagName">Tag name of the elements.</param>
+        /// <returns>A collection of HTML elements.</returns>
+        public HtmlCollection GetElementsByTagName(string tagName)
+            => new HtmlCollection($"document.getElementsByTagName('{tagName}')")
+            {
+                Document = this,
+            };
+
+        /// <summary>
+        /// Gets a collection of HTML elements with a given type.
+        /// </summary>
+        /// <typeparam name="T">The type of HTML elements to get.</typeparam>
+        /// <returns>A collection of HTML elements.</returns>
+        public HtmlCollection<T> GetElementsByTagName<T>()
+            where T : HtmlElement
+            => new HtmlCollection<T>($"document.getElementsByTagName('{HtmlElementFactory.GetTag<T>()}')")
+            {
+                Document = this,
+            };
+
+        /// <summary>
+        /// Gets an HTML element from a js expression.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
+        /// <returns>The HTML element.</returns>
+        internal HtmlElement GetElementByExpression(string expression)
+        {
+            bool exists = JavaScript.Execute<bool>($"{expression} instanceof HTMLElement");
+
+            if (!exists)
+            {
+                throw new ArgumentException("Given expression does not evaluate to an object.", nameof(expression));
+            }
+
+            string metaId = JavaScript.Execute<string>($"metaIdTableReverse.get({expression})");
+            if (!string.IsNullOrEmpty(metaId))
+            {
+                return Elements[metaId];
+            }
+
+            string tag = JavaScript.Execute<string>($"{expression}.tagName");
+            HtmlElement element = HtmlElementFactory.Create(tag);
+            element.Document = this;
+            element.MetaId = Guid.NewGuid().ToString();
+            AddMetaId(element, expression);
+            return element;
+        }
+
         private static void AddDefaultEvents(HtmlElement element)
         {
             foreach (string sort in JsEvents.GetEvents())
@@ -113,29 +164,6 @@ namespace Plover.Dom
             JavaScript.Execute($"metaIdTable.set('{element.MetaId}', {jsExpression});");
             JavaScript.Execute($"metaIdTableReverse.set(metaIdTable.get('{element.MetaId}'), '{element.MetaId}');");
             AddDefaultEvents(element);
-        }
-
-        private HtmlElement GetElementByExpression(string expression)
-        {
-            bool exists = JavaScript.Execute<bool>($"{expression} instanceof HTMLElement");
-
-            if (!exists)
-            {
-                throw new ArgumentException("Given expression does not evaluate to an object.", nameof(expression));
-            }
-
-            string metaId = JavaScript.Execute<string>($"metaIdTableReverse.get({expression})");
-            if (!string.IsNullOrEmpty(metaId))
-            {
-                return Elements[metaId];
-            }
-
-            string tag = JavaScript.Execute<string>($"{expression}.tagName");
-            HtmlElement element = HtmlElementFactory.Create(tag);
-            element.Document = this;
-            element.MetaId = Guid.NewGuid().ToString();
-            AddMetaId(element, expression);
-            return element;
         }
     }
 }
