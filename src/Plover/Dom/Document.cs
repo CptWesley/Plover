@@ -90,10 +90,7 @@ namespace Plover.Dom
         /// <param name="tagName">Tag name of the elements.</param>
         /// <returns>A collection of HTML elements.</returns>
         public HtmlCollection GetElementsByTagName(string tagName)
-            => new HtmlCollection($"document.getElementsByTagName('{tagName}')")
-            {
-                Document = this,
-            };
+            => CreateCollection($"document.getElementsByTagName('{tagName}')");
 
         /// <summary>
         /// Gets a collection of HTML elements with a given type.
@@ -102,10 +99,15 @@ namespace Plover.Dom
         /// <returns>A collection of HTML elements.</returns>
         public HtmlCollection<T> GetElementsByTagName<T>()
             where T : HtmlElement
-            => new HtmlCollection<T>($"document.getElementsByTagName('{HtmlElementFactory.GetTag<T>()}')")
-            {
-                Document = this,
-            };
+            => CreateCollection<T>($"document.getElementsByTagName('{HtmlElementFactory.GetTag<T>()}')");
+
+        /// <summary>
+        /// Gets a collection of HTML elements with a given class name.
+        /// </summary>
+        /// <param name="className">Class name of the elements to look for.</param>
+        /// <returns>A collection of HTML elements.</returns>
+        public HtmlCollection GetElementsByClassName(string className)
+            => CreateCollection($"document.getElementsByClassName('{className}')");
 
         /// <summary>
         /// Gets an HTML element from a js expression.
@@ -165,5 +167,18 @@ namespace Plover.Dom
             JavaScript.Execute($"metaIdTableReverse.set(metaIdTable.get('{element.MetaId}'), '{element.MetaId}');");
             AddDefaultEvents(element);
         }
+
+        private HtmlCollection CreateCollection(string expression)
+            => new HtmlCollection(expression)
+            {
+                Document = this,
+            };
+
+        private HtmlCollection<T> CreateCollection<T>(string expression)
+            where T : HtmlElement
+            => new HtmlCollection<T>(expression)
+            {
+                Document = this,
+            };
     }
 }
